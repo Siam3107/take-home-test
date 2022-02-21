@@ -15,26 +15,13 @@ export class Pharmacy {
           const oldDrugValue = Object.assign({}, drug);
           drug.decreaseExpiresIn();
 
+          
           if (drug.name === 'Fervex' && drug.expiresIn < 0) {
             drug.benefit = 0;
           } else if (drug.name === 'Fervex' || drug.name === 'Herbal Tea') {
-            drug.addBenefit();
-            if (drug.name === 'Fervex') {
-              if (oldDrugValue.expiresIn <= 10) {
-                drug.addBenefit();
-              } 
-              if (oldDrugValue.expiresIn <= 5) {
-                drug.addBenefit();
-              }
-            } else if (drug.expiresIn < 0) {
-              drug.addBenefit();
-            }
+            drug.manageDrugsGainBenefit(oldDrugValue);
           } else {
-            this.drugLoseBenefit(drug);
-
-            if (drug.expiresIn < 0) {
-              this.drugLoseBenefit(drug);
-            }
+            drug.manageDrugsDecreasingBenefit();
           }
         }
       } else {
@@ -43,19 +30,5 @@ export class Pharmacy {
     });
     
     return this.drugs;
-  }
-
-  /**
-   * Update benefit when drug is expired
-   * @param {*} drug 
-   */
-  drugLoseBenefit(drug) {
-    // For all others drugs
-    drug.decreaseBenefit();
-
-    // If drug is Dafalgan, it lose 1 more Benefit
-    if (drug.name === 'Dafalgan') {
-      drug.decreaseBenefit();
-    }
   }
 }
